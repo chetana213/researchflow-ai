@@ -1,48 +1,83 @@
+
 """
-Document router handling document listing and document retrieval.
+Document router connected to MongoDB.
 """
 
-from fastapi import APIRouter, HTTPException
+from bson import ObjectId
+from fastapi import APIRouter, HTTPException, Query
+
+from app.database import database
 from app.schemas.document import DocumentResponse
 
 router = APIRouter(prefix="/documents", tags=["Documents"])
 
+documents_collection = database["documents"]
 
-@router.get(
-    "",
-    tags=["Documents"],
-)
-async def list_documents(category: str = "all", page: int = 1):
+
+@router.get("")
+async def list_documents(
+    category: str = "all",
+    page: int = Query(default=1, ge=1),
+    limit: int = Query(default=10, ge=1, le=100),
+):
     """
-    List documents with optional filtering and pagination (Query Parameters).
-    - category: filter documents by category (defaults to 'all')
-    - page: 1-based page index (defaults to 1)
+    Retrieve documents from MongoDB with filtering and pagination.
     """
+
+    query = {}
+
+    if category.lower() != "all":
+        query["category"] = category
+
+    skip = (page - 1) * limit
+
+    cursor = (
+        documents_collection
+        .find(query)
+        .skip(skip)
+        .limit(limit)
+    )
+
+    documents = []
+
+    async for document in cursor:
+        document["document_id"] = str(document.pop("_id"))
+        documents.append(document)
+
+    total = await documents_collection.count_documents(query)
+
     return {
         "category": category,
         "page": page,
-        "message": "Documents listed successfully",
+        "limit": limit,
+        "total": total,
+        "documents": documents,
+        "message": "Documents retrieved successfully",
     }
 
 
-@router.get(
-    "/{document_id}",
-    response_model=DocumentResponse,
-    tags=["Documents"],
-)
+@router.get("/{document_id}", response_model=DocumentResponse)
 async def get_document(document_id: str):
     """
-    Retrieve document details by document_id (Path Parameter).
-    Returns 200 with DocumentResponse for demo document 'doc_101'.
-    Raises 404 HTTPException for any other document ID.
+    Retrieve a single document using its MongoDB ObjectId.
     """
-    if document_id != "doc_101":
+
+    if not ObjectId.is_valid(document_id):
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid document ID",
+        )
+
+    document = await documents_collection.find_one(
+        {"_id": ObjectId(document_id)}
+    )
+
+    if document is None:
         raise HTTPException(
             status_code=404,
             detail="Document not found",
         )
 
-    return {
-        "document_id": document_id,
-        "message": "Document retrieved successfully",
-    }
+    document["document_id"] = str(document.pop("_id"))
+
+    return document

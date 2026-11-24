@@ -4,15 +4,23 @@ ResearchFlow AI - Main FastAPI Application
 This module initializes the FastAPI application, configures CORS middleware,
 preserves system endpoints (root and health), and registers modular routers.
 """
-
+from contextlib import asynccontextmanager
+from app.database import connect_to_mongo, close_mongo_connection
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.core.config import settings
 from app.routers import documents_router, questions_router, demo_router
-
+@asynccontextmanager
+async def lifespan(app):
+    # Runs when FastAPI starts
+    await connect_to_mongo()
+    yield
+    # Runs when FastAPI shuts down
+    await close_mongo_connection()
 # Initialize the FastAPI application using configured settings
 app = FastAPI(
     title=settings.app_name,
+    lifespan=lifespan,
     description="Agentic Research & Knowledge Assistant - Backend API",
     version="0.1.0",
 )

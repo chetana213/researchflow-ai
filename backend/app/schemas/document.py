@@ -1,13 +1,14 @@
-"""
-Document schemas for request and response validation.
-"""
 
 from pydantic import BaseModel
+from typing import Optional
 
 
 class DocumentResponse(BaseModel):
-    """
-    Response model for document retrieval endpoints.
-    """
     document_id: str
-    message: str
+    title: str
+    author: Optional[str] = None
+    category: Optional[str] = None
+    file_name: Optional[str] = None
+    status: Optional[str] = None
+    description: Optional[str] = None
+    source: Optional[str] = None
