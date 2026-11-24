@@ -39,3 +39,9 @@ dist/
 dist-ssr/
 *.local
 .eslintcache
+
+
+# Uploaded documents and local storage
+uploads/
+backend/uploads/
+*.pdf
