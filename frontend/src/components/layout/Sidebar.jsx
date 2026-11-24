@@ -13,12 +13,12 @@ import {
 } from '../icons/Icons';
 
 const NAV_ITEMS = [
-  { id: 'overview', label: 'Overview', icon: OverviewIcon },
-  { id: 'library', label: 'My Library', icon: LibraryIcon, badge: '6' },
-  { id: 'research', label: 'AI Research', icon: ResearchIcon, highlight: true },
-  { id: 'collections', label: 'Collections', icon: CollectionsIcon },
-  { id: 'reports', label: 'Reports', icon: ReportsIcon, badge: '4' },
-  { id: 'settings', label: 'Settings', icon: SettingsIcon },
+  { id: 'overview',     label: 'Overview',     icon: OverviewIcon },
+  { id: 'library',      label: 'My Library',   icon: LibraryIcon,  badge: '6' },
+  { id: 'research',     label: 'AI Research',  icon: ResearchIcon, highlight: true },
+  { id: 'collections',  label: 'Collections',  icon: CollectionsIcon },
+  { id: 'reports',      label: 'Reports',      icon: ReportsIcon,  badge: '4' },
+  { id: 'settings',     label: 'Settings',     icon: SettingsIcon },
 ];
 
 export default function Sidebar({
@@ -29,9 +29,14 @@ export default function Sidebar({
   mobileOpen,
   onCloseMobile,
 }) {
+  const handleNav = (id) => {
+    onSelectTab(id);
+    if (mobileOpen && onCloseMobile) onCloseMobile();
+  };
+
   return (
     <>
-      {/* Mobile backdrop */}
+      {/* Mobile backdrop — tap to close */}
       {mobileOpen && (
         <div
           className="sidebar-backdrop"
@@ -40,13 +45,18 @@ export default function Sidebar({
         />
       )}
 
-      <aside className={`sidebar ${collapsed ? 'collapsed' : ''} ${mobileOpen ? 'open' : ''}`}>
-        {/* Brand Header */}
+      <aside
+        className={`sidebar${collapsed ? ' collapsed' : ''}${mobileOpen ? ' open' : ''}`}
+        aria-label="Main navigation"
+      >
+        {/* ── Brand Header ── */}
         <div className="sidebar-header">
-          <div
+          <button
+            type="button"
             className="sidebar-brand"
-            onClick={() => onSelectTab('overview')}
-            title="ResearchFlow AI Overview"
+            onClick={() => handleNav('overview')}
+            title="Go to Overview"
+            aria-label="ResearchFlow AI — Go to Overview"
           >
             <div className="brand-icon-wrapper">
               <LogoIcon size={20} className="brand-icon" />
@@ -57,17 +67,19 @@ export default function Sidebar({
                 <span className="brand-badge">AI</span>
               </div>
             )}
-          </div>
+          </button>
 
-          {/* Desktop Collapse / Expand Toggle Button */}
+          {/* Desktop collapse/expand toggle */}
           <button
             type="button"
             className="sidebar-collapse-btn"
             onClick={onToggleCollapse}
-            title={collapsed ? 'Expand Sidebar (Ctrl+\\)' : 'Collapse Sidebar (Ctrl+\\)'}
+            title={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
             aria-label={collapsed ? 'Expand Sidebar' : 'Collapse Sidebar'}
           >
-            {collapsed ? <ChevronRightIcon size={14} /> : <ChevronLeftIcon size={14} />}
+            {collapsed
+              ? <ChevronRightIcon size={14} />
+              : <ChevronLeftIcon  size={14} />}
           </button>
 
           {/* Mobile close button */}
@@ -75,13 +87,13 @@ export default function Sidebar({
             type="button"
             className="sidebar-mobile-close-btn"
             onClick={onCloseMobile}
-            aria-label="Close navigation"
+            aria-label="Close navigation menu"
           >
             <CloseIcon size={16} />
           </button>
         </div>
 
-        {/* Pro Banner (Hidden when collapsed) */}
+        {/* ── Pro Banner ── */}
         {!collapsed && (
           <div className="sidebar-pro-card">
             <div className="pro-card-header">
@@ -92,10 +104,10 @@ export default function Sidebar({
           </div>
         )}
 
-        {/* Navigation list */}
-        <nav className="sidebar-nav">
+        {/* ── Navigation ── */}
+        <nav className="sidebar-nav" aria-label="Workspace pages">
           {!collapsed && <div className="nav-group-label">WORKSPACE</div>}
-          <ul className="nav-list">
+          <ul className="nav-list" role="list">
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
@@ -103,20 +115,23 @@ export default function Sidebar({
                 <li key={item.id} className="nav-item">
                   <button
                     type="button"
-                    className={`nav-link ${isActive ? 'active' : ''} ${
-                      item.highlight ? 'highlight-link' : ''
-                    } ${collapsed ? 'collapsed-link' : ''}`}
-                    onClick={() => {
-                      onSelectTab(item.id);
-                      if (onCloseMobile) onCloseMobile();
-                    }}
+                    className={[
+                      'nav-link',
+                      isActive             ? 'active'         : '',
+                      item.highlight       ? 'highlight-link' : '',
+                      collapsed            ? 'collapsed-link' : '',
+                    ].filter(Boolean).join(' ')}
+                    onClick={() => handleNav(item.id)}
                     title={collapsed ? item.label : undefined}
+                    aria-label={item.label}
                     aria-current={isActive ? 'page' : undefined}
                   >
-                    <Icon size={18} className="nav-icon" />
+                    <Icon size={18} className="nav-icon" aria-hidden="true" />
                     {!collapsed && <span className="nav-label">{item.label}</span>}
                     {!collapsed && item.badge && (
-                      <span className="nav-badge">{item.badge}</span>
+                      <span className="nav-badge" aria-label={`${item.badge} items`}>
+                        {item.badge}
+                      </span>
                     )}
                   </button>
                 </li>
@@ -125,10 +140,10 @@ export default function Sidebar({
           </ul>
         </nav>
 
-        {/* User profile footer */}
+        {/* ── User Profile Footer ── */}
         <div className="sidebar-footer">
-          <div className={`user-profile-card ${collapsed ? 'collapsed-profile' : ''}`}>
-            <div className="user-avatar" title="Chetana Javvadhi">
+          <div className={`user-profile-card${collapsed ? ' collapsed-profile' : ''}`}>
+            <div className="user-avatar" title="Chetana Javvadhi" aria-label="User: Chetana Javvadhi">
               CJ
             </div>
             {!collapsed && (

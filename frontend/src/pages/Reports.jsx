@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { DEMO_REPORTS } from '../data/demoData';
 import {
   ReportsIcon,
@@ -14,6 +14,14 @@ export default function Reports() {
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState('All');
   const [selectedReport, setSelectedReport] = useState(null);
+  const [exportNotice, setExportNotice] = useState(null);
+
+  // Auto-clear export notice after 2.5 s
+  useEffect(() => {
+    if (!exportNotice) return;
+    const t = setTimeout(() => setExportNotice(null), 2500);
+    return () => clearTimeout(t);
+  }, [exportNotice]);
 
   const statuses = ['All', 'Ready', 'Processing', 'Draft'];
 
@@ -208,12 +216,10 @@ export default function Reports() {
               <button
                 type="button"
                 className="btn-modal-submit"
-                onClick={() => {
-                  alert("Report export ready! Downloading markdown artifact...");
-                  setSelectedReport(null);
-                }}
+                onClick={() => setExportNotice(selectedReport.id)}
+                disabled={exportNotice === selectedReport?.id}
               >
-                Export Markdown
+                {exportNotice === selectedReport?.id ? '✓ Export Queued' : 'Export Markdown'}
               </button>
             </div>
           </div>
