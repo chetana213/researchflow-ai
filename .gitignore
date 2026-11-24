@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environments
+.venv/
+env/
+venv/
+ENV/
+
+# Environment variables and secrets
+.env
+.env.*
+*.env
+backend/.env
+backend/.env.*
+!.env.example
+!backend/.env.example
+
+# Testing and coverage caches
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Editor and IDE configurations
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Node.js / Frontend dependencies & build artifacts
+node_modules/
+dist/
+dist-ssr/
+*.local
+.eslintcache
