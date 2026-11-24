@@ -32,6 +32,34 @@ export async function fetchDocumentById(documentId) {
 }
 
 /**
+ * Upload a research paper PDF file to the backend.
+ * Uses multipart/form-data via FormData with field name 'file'.
+ * @param {File} file - The PDF File object to upload
+ * @returns {Promise<Object>} The created document record from the backend
+ */
+export async function uploadDocument(file) {
+  const formData = new FormData();
+  formData.append('file', file);
+
+  const response = await fetch(`${API_BASE_URL}/documents/upload`, {
+    method: 'POST',
+    // Do NOT set Content-Type header manually; browser automatically sets multipart/form-data with boundary
+    body: formData,
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    const detailMsg = Array.isArray(data.detail)
+      ? data.detail.map((err) => err.msg).join(', ')
+      : data.detail || `Upload failed with status HTTP ${response.status}`;
+    throw new Error(detailMsg);
+  }
+
+  return data;
+}
+
+/**
  * Submit a research question for a specific document.
  * @param {string} documentId - Target document identifier
  * @param {string} question - Research query (min 5, max 2000 chars)

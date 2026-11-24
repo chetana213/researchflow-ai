@@ -3420,3 +3420,134 @@ textarea:focus-visible {
   background-color: var(--color-danger, #ef4444);
   box-shadow: 0 0 8px var(--color-danger, #ef4444);
 }
+
+
+/* ============================================================
+   Upload Modal & Interactive File Drag-and-Drop States
+   ============================================================ */
+
+.upload-dropzone.dragging {
+  border-color: var(--accent-primary);
+  background-color: rgba(139, 124, 255, 0.08);
+  transform: scale(1.005);
+}
+
+.selected-file-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0.85rem 1rem;
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-md);
+  gap: 0.75rem;
+  transition: border-color var(--transition-fast);
+}
+
+.selected-file-card:hover {
+  border-color: rgba(139, 124, 255, 0.3);
+}
+
+.selected-file-info {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  overflow: hidden;
+  flex: 1;
+}
+
+.selected-file-icon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.selected-file-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  overflow: hidden;
+}
+
+.selected-file-name {
+  font-size: 0.88rem;
+  font-weight: 500;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.selected-file-size {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.btn-remove-file {
+  color: var(--text-muted);
+  padding: 0.35rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  background: transparent;
+  border: none;
+}
+
+.btn-remove-file:hover {
+  color: var(--color-danger, #ef4444);
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.upload-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.82rem;
+  padding: 0.65rem 0.95rem;
+  border-radius: var(--radius-md);
+  width: 100%;
+  line-height: 1.4;
+}
+
+.upload-alert.error {
+  background-color: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+  color: var(--color-danger, #ef4444);
+}
+
+.upload-alert.success {
+  background-color: rgba(67, 201, 165, 0.08);
+  border: 1px solid rgba(67, 201, 165, 0.25);
+  color: var(--accent-secondary);
+}
+
+.library-alert-banner {
+  margin-bottom: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn-close-alert {
+  color: inherit;
+  opacity: 0.7;
+  padding: 0.2rem;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-close-alert:hover {
+  opacity: 1;
+}
+
+.btn-modal-submit:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
